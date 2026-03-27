@@ -1,4 +1,4 @@
-// src/constants/tax-config.ts
+// app/constants/tax-config.ts
 // ВЕРСИЯ: 1.0.0 | Проверено: 2026-03-27
 // ИСТОЧНИКИ: mybuh.kz, kgd.gov.kz, НК РК Закон №214-VIII, КоАП РК
 

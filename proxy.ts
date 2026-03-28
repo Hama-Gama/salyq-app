@@ -27,11 +27,3 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)'],
 }
-```
-
-**Результат:**
-```
-salyq-app.kz          → русский (URL остаётся чистым)
-salyq-app.kz/dashboard → русский dashboard
-salyq-app.kz/kz        → казахский
-salyq-app.kz/kz/dashboard → казахский dashboard

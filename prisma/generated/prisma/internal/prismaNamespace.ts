@@ -1270,6 +1270,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  emailVerified: 'emailVerified',
   name: 'name',
   image: 'image',
   iin: 'iin',
@@ -1478,20 +1479,6 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
- * Reference to a field of type 'SubType'
- */
-export type EnumSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubType'>
-    
-
-
-/**
- * Reference to a field of type 'SubType[]'
- */
-export type ListEnumSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubType[]'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1502,6 +1489,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SubType'
+ */
+export type EnumSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubType'>
+    
+
+
+/**
+ * Reference to a field of type 'SubType[]'
+ */
+export type ListEnumSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubType[]'>
     
 
 

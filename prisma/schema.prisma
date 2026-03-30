@@ -18,9 +18,12 @@ datasource db {
 }
 
 // ─── ПОЛЬЗОВАТЕЛЬ ────────────────────────────────────
+
+
 model User {
   id                String    @id @default(cuid())
-  email             String    @unique
+  email             String?   @unique
+  emailVerified     DateTime?            // ← добавь это поле
   name              String?
   image             String?
   iin               String?
@@ -37,6 +40,7 @@ model User {
   pushEnabled       Boolean   @default(false)
   language          String    @default("ru")
 
+  // Метаданные
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -49,9 +53,10 @@ model User {
   documents         Document[]
   accessGrants      AccessGrant[]
   supportTickets    SupportTicket[]
-
+ 
   @@map("users")
 }
+
 
 // ─── NEXT-AUTH ТАБЛИЦЫ ───────────────────────────────
 model Account {

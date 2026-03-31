@@ -1,33 +1,39 @@
 import { auth } from '@/auth'
 import { NextResponse } from 'next/server'
 
+const locales = ['ru', 'kz']
 const defaultLocale = 'ru'
-const secondLocale = 'kz'
 
-export default auth(request => {
-	const { pathname } = request.nextUrl
+export default auth(req => {
+	const { pathname } = req.nextUrl
 
-	// /kz/* — оставляем как есть
+	// 1. Пропускаем системные файлы и API
 	if (
-		pathname.startsWith(`/${secondLocale}/`) ||
-		pathname === `/${secondLocale}`
+		pathname.startsWith('/api') ||
+		pathname.startsWith('/_next') ||
+		pathname.includes('.') // файлы типа .png, .ico
 	) {
 		return NextResponse.next()
 	}
 
-	// /ru/* — убираем /ru из URL
-	if (
-		pathname.startsWith(`/${defaultLocale}/`) ||
-		pathname === `/${defaultLocale}`
-	) {
-		const newPath = pathname.replace(`/${defaultLocale}`, '') || '/'
-		request.nextUrl.pathname = `/${defaultLocale}${newPath}`
-		return NextResponse.rewrite(request.nextUrl)
+	// 2. Проверяем наличие локали в URL
+	const pathnameHasLocale = locales.some(
+		locale => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+	)
+
+	// 3. Если локали нет — редирект на /ru/...
+	if (!pathnameHasLocale) {
+		req.nextUrl.pathname = `/${defaultLocale}${pathname}`
+		return NextResponse.redirect(req.nextUrl)
 	}
 
-	// Всё остальное — rewrite на /ru/*
-	request.nextUrl.pathname = `/${defaultLocale}${pathname}`
-	return NextResponse.rewrite(request.nextUrl)
+	// 4. Передаем pathname в заголовки (понадобится для активных ссылок в Navbar)
+	const requestHeaders = new Headers(req.headers)
+	requestHeaders.set('x-pathname', pathname)
+
+	return NextResponse.next({
+		request: { headers: requestHeaders },
+	})
 })
 
 export const config = {

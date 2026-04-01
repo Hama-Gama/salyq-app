@@ -5,6 +5,8 @@ import type { Locale } from '@/types'
 import AppSidebar from '@/components/shared/AppSidebar'
 import { headers } from 'next/headers'
 import Navbar from '@/components/shared/Navbar'
+// ОБЯЗАТЕЛЬНО импортируем SidebarInset
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 
 export default async function DashboardLayout({
 	children,
@@ -16,30 +18,32 @@ export default async function DashboardLayout({
 	const { lang } = await params
 	const session = await auth()
 
-	// Редирект на логин если не авторизован
 	if (!session) {
 		redirect(`/${lang}/login`)
 	}
 
 	const dict = await getDictionary(lang)
-
-	// Получаем текущий путь для активного пункта меню
 	const headersList = await headers()
 	const fullPath = headersList.get('x-pathname') ?? '/dashboard'
-	// Убираем префикс языка
-	const currentPath =
-		fullPath.replace('/kz', '').replace('/ru', '') || '/dashboard'
+	const currentPath = fullPath.replace(`/${lang}`, '') || '/dashboard'
 
 	return (
-		<div className='flex min-h-screen bg-muted/30'>
-			{/* Боковая панель — только десктоп */}
+		<SidebarProvider>
+			{/* AppSidebar теперь будет правильно взаимодействовать 
+        с SidebarInset, который идет следом.
+      */}
 			<AppSidebar lang={lang} dict={dict} currentPath={currentPath} />
 
-			{/* Основной контент */}
-			<div className='flex-1 flex flex-col min-w-0'>
+			{/* SidebarInset — КРИТИЧЕСКИ ВАЖЕН. 
+        Он автоматически убирает ту самую "пустоту" справа.
+      */}
+			<SidebarInset className='flex flex-col min-h-screen bg-muted/30'>
 				<Navbar lang={lang} dict={dict} currentPath={currentPath} />
-				<main className='flex-1 p-4 md:p-6'>{children}</main>
-			</div>
-		</div>
+
+				<main className='flex-1 p-4 md:p-6 w-full max-w-7xl mx-auto'>
+					{children}
+				</main>
+			</SidebarInset>
+		</SidebarProvider>
 	)
 }

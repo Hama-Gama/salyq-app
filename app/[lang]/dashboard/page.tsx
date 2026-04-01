@@ -1,49 +1,44 @@
-import { auth } from '@/auth'
-import { getDictionary } from '@/lib/dictionary'
-import type { Locale } from '@/types'
+'use client'
 
-export default async function DashboardPage({
-	params,
-}: {
-	params: Promise<{ lang: Locale }>
-}) {
-	const { lang } = await params
-	const session = await auth()
-	const dict = await getDictionary(lang)
+import { useState } from 'react'
+import { useParams } from 'next/navigation'
+import type { Locale } from '@/types'
+import IncomeInput from '@/components/dashboard/IncomeInput'
+import IncomeHistory from '@/components/dashboard/IncomeHistory'
+import { useDictionary } from '@/hooks/useDictionary'
+
+export default function DashboardPage() {
+	const params = useParams()
+	const lang = (params.lang as Locale) ?? 'ru'
+	const { dict, loading } = useDictionary(lang)
+	const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+	if (loading || !dict) {
+		return (
+			<div className='flex items-center justify-center min-h-64'>
+				<p className='text-base text-muted-foreground'>Загрузка...</p>
+			</div>
+		)
+	}
 
 	return (
-		<div className='space-y-6'>
+		<div className='space-y-6 max-w-4xl'>
 			<div>
-				<h1 className='text-2xl font-bold text-foreground'>
-					{dict.dashboard.title}
-				</h1>
-				<p className='text-muted-foreground mt-1'>
-					{lang === 'ru'
-						? `Добро пожаловать, ${session?.user?.name}`
-						: `Қош келдіңіз, ${session?.user?.name}`}
+				<h1 className='text-3xl font-bold'>{dict.dashboard.title}</h1>
+				<p className='text-base text-muted-foreground mt-1'>
+					{dict.dashboard.monthly_payments}
 				</p>
 			</div>
 
-			{/* Тестовые карточки */}
-			<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-				<div className='bg-background rounded-xl border p-6'>
-					<p className='text-sm text-muted-foreground'>
-						{dict.dashboard.total_income}
-					</p>
-					<p className='text-2xl font-bold mt-2'>0 ₸</p>
-				</div>
-				<div className='bg-background rounded-xl border p-6'>
-					<p className='text-sm text-muted-foreground'>
-						{dict.dashboard.tax_amount}
-					</p>
-					<p className='text-2xl font-bold mt-2'>0 ₸</p>
-				</div>
-				<div className='bg-background rounded-xl border p-6'>
-					<p className='text-sm text-muted-foreground'>
-						{dict.dashboard.next_deadline}
-					</p>
-					<p className='text-2xl font-bold mt-2'>25.04</p>
-				</div>
+			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+				{/* Форма ввода */}
+				<IncomeInput
+					dict={dict}
+					onSuccess={() => setRefreshTrigger(t => t + 1)}
+				/>
+
+				{/* История и лимит */}
+				<IncomeHistory dict={dict} refreshTrigger={refreshTrigger} />
 			</div>
 		</div>
 	)

@@ -10,9 +10,11 @@ export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'CLOSED'
 
 export type DocType = 'RECEIPT' | 'REPORT' | 'TAX_RETURN'
 
-// Навигационный пункт меню
 export interface NavItem {
 	href: string
 	labelKey: string
 	icon: string
 }
+
+// Тип словаря — импортируется из dictionary.ts
+export type { Dictionary } from '@/lib/dictionary'

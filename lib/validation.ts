@@ -32,8 +32,6 @@ export const incomeSchema = z.object({
 
 export type IncomeInput = z.infer<typeof incomeSchema>
 
-
-
 export const profileSchema = z.object({
 	name: z.string().min(2).max(100).optional(),
 	iin: z
@@ -46,3 +44,20 @@ export const profileSchema = z.object({
 })
 
 export type ProfileInput = z.infer<typeof profileSchema>
+
+
+export const employeeSchema = z.object({
+	name: z
+		.string()
+		.min(2, { error: 'Минимум 2 символа' })
+		.max(200, { error: 'Максимум 200 символов' }),
+	salary: z
+		.number()
+		.positive({ error: 'Оклад должен быть больше 0' })
+		.min(85_000, { error: 'Минимальный оклад — 1 МЗП (85 000 тг)' })
+		.max(10_000_000, { error: 'Максимальный оклад — 10 000 000 тг' }),
+	hiredAt: z.string().optional(),
+})
+
+export type EmployeeInput = z.infer<typeof employeeSchema>
+

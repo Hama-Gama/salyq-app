@@ -2,20 +2,35 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { incomeSchema } from '@/lib/validation'
 import { checkIncomeLimit } from '@/lib/calculations'
-import * as z from 'zod'
 
-// GET — получить историю доходов
-export async function GET() {
+// GET — история доходов с cursor-based пагинацией
+export async function GET(request: Request) {
 	const session = await auth()
 	if (!session?.user?.id) {
 		return Response.json({ error: 'Не авторизован' }, { status: 401 })
 	}
 
+	const { searchParams } = new URL(request.url)
+	const cursor = searchParams.get('cursor') // ID последней записи
+	const limit = Math.min(parseInt(searchParams.get('limit') ?? '20'), 50)
+
+	// Запрос с пагинацией
 	const incomes = await prisma.income.findMany({
 		where: { userId: session.user.id },
 		orderBy: { date: 'desc' },
-		take: 50,
+		take: limit + 1, // берём на 1 больше чтобы узнать есть ли следующая страница
+		...(cursor
+			? {
+					cursor: { id: cursor },
+					skip: 1, // пропускаем сам cursor
+				}
+			: {}),
 	})
+
+	// Определяем есть ли следующая страница
+	const hasNextPage = incomes.length > limit
+	const items = hasNextPage ? incomes.slice(0, limit) : incomes
+	const nextCursor = hasNextPage ? items[items.length - 1].id : null
 
 	// Считаем общий доход за текущий год
 	const currentYear = new Date().getFullYear()
@@ -33,7 +48,9 @@ export async function GET() {
 	const limitCheck = checkIncomeLimit(totalIncome)
 
 	return Response.json({
-		incomes,
+		incomes: items,
+		nextCursor,
+		hasNextPage,
 		totalIncome,
 		limitCheck,
 	})
@@ -48,7 +65,6 @@ export async function POST(request: Request) {
 
 	const body = await request.json()
 
-	// Валидация через Zod 4
 	const result = incomeSchema.safeParse(body)
 	if (!result.success) {
 		return Response.json(
@@ -59,7 +75,6 @@ export async function POST(request: Request) {
 
 	const { amount, category, note, date } = result.data
 
-	// Сохраняем доход
 	const income = await prisma.income.create({
 		data: {
 			userId: session.user.id,
@@ -70,7 +85,7 @@ export async function POST(request: Request) {
 		},
 	})
 
-	// Проверяем лимит после добавления
+	// Проверяем лимит
 	const currentYear = new Date().getFullYear()
 	const yearStart = new Date(currentYear, 0, 1)
 
@@ -85,11 +100,7 @@ export async function POST(request: Request) {
 	const totalIncome = Number(totalResult._sum.amount ?? 0)
 	const limitCheck = checkIncomeLimit(totalIncome)
 
-	return Response.json({
-		income,
-		totalIncome,
-		limitCheck,
-	})
+	return Response.json({ income, totalIncome, limitCheck })
 }
 
 // DELETE — удалить доход
@@ -106,7 +117,6 @@ export async function DELETE(request: Request) {
 		return Response.json({ error: 'ID не указан' }, { status: 400 })
 	}
 
-	// Проверяем что запись принадлежит пользователю
 	const income = await prisma.income.findFirst({
 		where: { id, userId: session.user.id },
 	})

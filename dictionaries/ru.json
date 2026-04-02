@@ -110,14 +110,24 @@
 		"empty": "Записей пока нет"
 	},
 	"profile": {
-		"title": "Профиль",
-		"name": "Имя ИП",
-		"iin": "ИИН",
 		"language": "Язык интерфейса",
-		"telegram": "Telegram Chat ID",
 		"notifications": "Уведомления",
-		"save": "Сохранить",
-		"saved": "Сохранено!"
+		"title": "Профиль",
+    "subtitle": "Управление личными данными",
+    "account": "Аккаунт",
+    "edit": "Редактировать данные",
+    "name": "Имя ИП",
+    "name_placeholder": "Введите ваше имя",
+    "iin": "ИИН",
+    "iin_current": "Текущий ИИН",
+    "iin_placeholder": "12 цифр",
+    "iin_hint": "ИИН хранится в зашифрованном виде",
+    "telegram": "Telegram Chat ID",
+    "telegram_placeholder": "например: 123456789",
+    "telegram_hint": "Для получения уведомлений о дедлайнах",
+    "subscription": "Тариф",
+    "save": "Сохранить",
+    "saved": "Профиль сохранён"
 	},
 	"support": {
 		"title": "Поддержка",
@@ -151,7 +161,8 @@
 		"invalid_amount": "Введите корректную сумму",
 		"invalid_salary": "Введите корректный оклад",
 		"server_error": "Ошибка сервера. Попробуйте позже.",
-		"unauthorized": "Необходима авторизация"
+		"unauthorized": "Необходима авторизация",
+		"too_many_requests": "Слишком много запросов. Попробуйте позже"
 	},
 	"common": {
 		"save": "Сохранить",

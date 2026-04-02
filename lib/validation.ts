@@ -31,3 +31,18 @@ export const incomeSchema = z.object({
 })
 
 export type IncomeInput = z.infer<typeof incomeSchema>
+
+
+
+export const profileSchema = z.object({
+	name: z.string().min(2).max(100).optional(),
+	iin: z
+		.string()
+		.length(12, { error: 'ИИН должен содержать 12 цифр' })
+		.regex(/^\d{12}$/, { error: 'ИИН должен содержать только цифры' })
+		.optional(),
+	language: z.enum(['ru', 'kz']).optional(),
+	tgChatId: z.string().optional(),
+})
+
+export type ProfileInput = z.infer<typeof profileSchema>

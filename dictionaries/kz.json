@@ -110,14 +110,24 @@
 		"empty": "Жазбалар әлі жоқ"
 	},
 	"profile": {
-		"title": "Профиль",
 		"name": "ЖК атауы",
-		"iin": "ЖСН",
 		"language": "Интерфейс тілі",
-		"telegram": "Telegram Chat ID",
 		"notifications": "Хабарландырулар",
-		"save": "Сақтау",
-		"saved": "Сақталды!"
+		"title": "Профиль",
+    "subtitle": "Жеке деректерді басқару",
+    "account": "Аккаунт",
+    "edit": "Деректерді өзгерту",
+    "name_placeholder": "Атыңызды енгізіңіз",
+    "iin": "ЖСН",
+    "iin_current": "Ағымдағы ЖСН",
+    "iin_placeholder": "12 сан",
+    "iin_hint": "ЖСН шифрланған түрде сақталады",
+    "telegram": "Telegram Chat ID",
+    "telegram_placeholder": "мысалы: 123456789",
+    "telegram_hint": "Мерзім туралы хабарландырулар алу үшін",
+    "subscription": "Тариф",
+    "save": "Сақтау",
+    "saved": "Профиль сақталды"
 	},
 	"support": {
 		"title": "Қолдау",
@@ -151,7 +161,8 @@
 		"invalid_amount": "Дұрыс соманы енгізіңіз",
 		"invalid_salary": "Дұрыс айлықты енгізіңіз",
 		"server_error": "Сервер қатесі. Кейінірек көріңіз.",
-		"unauthorized": "Авторизация қажет"
+		"unauthorized": "Авторизация қажет",
+		"too_many_requests": "Тым көп сұраныс. Кейінірек көріңіз"
 	},
 	"common": {
 		"save": "Сақтау",

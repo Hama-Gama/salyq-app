@@ -12,9 +12,10 @@ export default async function DashboardLayout({
 	params,
 }: {
 	children: React.ReactNode
-	params: Promise<{ lang: Locale }>
+	params: Promise<{ lang: string }>
 }) {
-	const { lang } = await params
+	const { lang: langParam } = await params
+	const lang = langParam as Locale
 	const session = await auth()
 
 	if (!session) {

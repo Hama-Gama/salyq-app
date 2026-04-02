@@ -84,7 +84,7 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className='max-w-2xl space-y-6'>
+		<div className='mx-auto w-full max-w-7xl p-3 md:p-6 space-y-6'>
 			<div>
 				<h1 className='text-3xl font-bold'>{dict.profile.title}</h1>
 				<p className='text-base text-muted-foreground mt-1'>

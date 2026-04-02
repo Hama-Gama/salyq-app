@@ -32,7 +32,7 @@ export default async function DashboardLayout({
 			<AppSidebar lang={lang} dict={dict} currentPath={currentPath} />
 			<SidebarInset className='flex flex-col min-h-screen bg-muted/30'>
 				<Navbar lang={lang} dict={dict} currentPath={currentPath} />
-				<main className='flex-1 p-4 md:p-6 w-full max-w-7xl mx-auto'>
+				<main className='flex flex-1 flex-col'>
 					{children}
 				</main>
 			</SidebarInset>

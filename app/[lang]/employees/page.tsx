@@ -57,7 +57,7 @@ export default function EmployeesPage() {
 				setSummary(data.summary ?? null)
 			}
 		} catch (e) {
-			console.error('Ошибка загрузки сотрудников:', e)
+			console.error('Ошибка загрузки:', e)
 		}
 		setLoading(false)
 	}, [])
@@ -75,7 +75,7 @@ export default function EmployeesPage() {
 	}
 
 	return (
-		<div className='space-y-6 max-w-4xl'>
+		<div className='mx-auto w-full max-w-7xl p-3 md:p-6 space-y-6'>
 			{/* Заголовок */}
 			<div className='flex items-center justify-between gap-4'>
 				<div>
@@ -97,7 +97,7 @@ export default function EmployeesPage() {
 
 			{/* Итоговые карточки */}
 			{summary && summary.activeCount > 0 && (
-				<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 					<div className='bg-background rounded-xl border p-6'>
 						<p className='text-base text-muted-foreground'>
 							{dict.employees.employer_total}
@@ -120,44 +120,57 @@ export default function EmployeesPage() {
 							{lang === 'ru' ? 'полная стоимость в месяц' : 'толық құны айына'}
 						</p>
 					</div>
+					<div className='bg-background rounded-xl border p-6'>
+						<p className='text-base text-muted-foreground'>
+							{lang === 'ru' ? 'Активных сотрудников' : 'Белсенді қызметкерлер'}
+						</p>
+						<p className='text-2xl font-bold mt-2'>{summary.activeCount}</p>
+						<p className='text-base text-muted-foreground mt-1'>
+							{lang === 'ru' ? 'человек' : 'адам'}
+						</p>
+					</div>
 				</div>
 			)}
 
 			{/* Форма добавления */}
 			{showForm && (
-				<EmployeeForm
-					dict={dict}
-					onSuccess={() => {
-						setShowForm(false)
-						fetchEmployees()
-					}}
-					onCancel={() => setShowForm(false)}
-				/>
+				<div className='w-full'>
+					<EmployeeForm
+						dict={dict}
+						onSuccess={() => {
+							setShowForm(false)
+							fetchEmployees()
+						}}
+						onCancel={() => setShowForm(false)}
+					/>
+				</div>
 			)}
 
 			{/* Список сотрудников */}
-			{loading ? (
-				<div className='text-center py-12 text-base text-muted-foreground'>
-					{dict.common.loading}
-				</div>
-			) : employees.length === 0 ? (
-				<div className='bg-background rounded-xl border p-12 text-center'>
-					<p className='text-base text-muted-foreground'>
-						{dict.employees.no_employees}
-					</p>
-				</div>
-			) : (
-				<div className='space-y-4'>
-					{employees.map(emp => (
-						<EmployeeCard
-							key={emp.id}
-							employee={emp}
-							dict={dict}
-							onFired={fetchEmployees}
-						/>
-					))}
-				</div>
-			)}
+			<div className='w-full'>
+				{loading ? (
+					<div className='text-center py-12 text-base text-muted-foreground'>
+						{dict.common.loading}
+					</div>
+				) : employees.length === 0 ? (
+					<div className='bg-background rounded-xl border p-12 text-center'>
+						<p className='text-base text-muted-foreground'>
+							{dict.employees.no_employees}
+						</p>
+					</div>
+				) : (
+					<div className='space-y-4'>
+						{employees.map(emp => (
+							<EmployeeCard
+								key={emp.id}
+								employee={emp}
+								dict={dict}
+								onFired={fetchEmployees}
+							/>
+						))}
+					</div>
+				)}
+			</div>
 		</div>
 	)
 }

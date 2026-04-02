@@ -22,7 +22,7 @@ export default function DashboardPage() {
 	}
 
 	return (
-		<div className='space-y-6 max-w-4xl'>
+		<div className='mx-auto w-full max-w-7xl p-3 md:p-6 space-y-6'>
 			<div>
 				<h1 className='text-3xl font-bold'>{dict.dashboard.title}</h1>
 				<p className='text-base text-muted-foreground mt-1'>
@@ -31,13 +31,10 @@ export default function DashboardPage() {
 			</div>
 
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-				{/* Форма ввода */}
 				<IncomeInput
 					dict={dict}
 					onSuccess={() => setRefreshTrigger(t => t + 1)}
 				/>
-
-				{/* История и лимит */}
 				<IncomeHistory dict={dict} refreshTrigger={refreshTrigger} />
 			</div>
 		</div>

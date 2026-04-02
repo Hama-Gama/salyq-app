@@ -3,11 +3,6 @@
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
-// generator client {
-//   provider = "prisma-client"
-//   output   = "../app/generated/prisma"
-// }
-
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
@@ -54,6 +49,8 @@ model User {
   accessGrants      AccessGrant[]
   supportTickets    SupportTicket[]
  
+	@@index([email])
+  @@index([subscriptionType])
   @@map("users")
 }
 
@@ -120,6 +117,8 @@ model Employee {
 
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userId, isActive])
   @@map("employees")
 }
 
@@ -137,6 +136,9 @@ model Income {
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+	@@index([userId])
+  @@index([userId, date])
+  @@index([date])
   @@map("incomes")
 }
 
@@ -160,6 +162,8 @@ model TaxSnapshot {
   user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, periodYear, periodHalf])
+  @@index([userId])
+	@@index([userId, periodYear])
   @@map("tax_snapshots")
 }
 
@@ -177,6 +181,8 @@ model Document {
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+	@@index([userId, docType])
   @@map("documents")
 }
 
@@ -195,6 +201,9 @@ model AccessGrant {
 
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+
+  @@index([userId])
+  @@index([endDate])
   @@map("access_grants")
 }
 
@@ -227,6 +236,8 @@ model SupportTicket {
 
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([status])
   @@map("support_tickets")
 }
 

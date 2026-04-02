@@ -95,10 +95,19 @@
 		"amount": "Сумма дохода",
 		"date": "Дата",
 		"category": "Категория",
-		"calculate": "Рассчитать",
+		"calculate": "Добавлено",
 		"history": "История доходов",
 		"total": "Итого за период",
-		"tax_estimate": "Предварительный налог"
+		"tax_estimate": "Предварительный налог",
+		"delete_title": "Удалить запись о доходе?",
+		"delete_description": "Доход на сумму",
+		"delete_date": "от",
+		"delete_warning": "⚠️ Это действие нельзя отменить. Запись будет удалена навсегда.",
+		"delete_confirm": "Удалить навсегда",
+		"delete_cancel": "Отмена",
+		"deleted_success": "Запись удалена",
+		"deleted_error": "Ошибка при удалении",
+		"empty": "Записей пока нет"
 	},
 	"profile": {
 		"title": "Профиль",

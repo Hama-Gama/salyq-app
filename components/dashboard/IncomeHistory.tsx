@@ -3,69 +3,81 @@
 import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { Trash2 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import type { Dictionary } from '@/lib/dictionary'
 
 interface Income {
-	id: string
-	amount: number
-	date: string
-	category: string | null
-	note: string | null
+  id: string
+  amount: number
+  date: string
+  category: string | null
+  note: string | null
 }
 
 interface LimitCheck {
-	status: string
-	usedPercent: number
-	remainingTenge: number
-	limitTenge: number
+  status: string
+  usedPercent: number
+  remainingTenge: number
+  limitTenge: number
 }
 
 interface Props {
-	dict: Dictionary
-	refreshTrigger: number
+  dict: Dictionary
+  refreshTrigger: number
 }
 
 export default function IncomeHistory({ dict, refreshTrigger }: Props) {
-	const [incomes, setIncomes] = useState<Income[]>([])
-	const [totalIncome, setTotalIncome] = useState(0)
-	const [limitCheck, setLimitCheck] = useState<LimitCheck | null>(null)
-	const [loading, setLoading] = useState(true)
+  const [incomes, setIncomes] = useState<Income[]>([])
+  const [totalIncome, setTotalIncome] = useState(0)
+  const [limitCheck, setLimitCheck] = useState<LimitCheck | null>(null)
+  const [loading, setLoading] = useState(true)
 
-	const fetchIncomes = useCallback(async () => {
-		setLoading(true)
-		const res = await fetch('/api/incomes')
-		if (res.ok) {
-			const data = await res.json()
-			setIncomes(data.incomes)
-			setTotalIncome(data.totalIncome)
-			setLimitCheck(data.limitCheck)
-		}
-		setLoading(false)
-	}, [])
+  const fetchIncomes = useCallback(async () => {
+    setLoading(true)
+    const res = await fetch('/api/incomes')
+    if (res.ok) {
+      const data = await res.json()
+      setIncomes(data.incomes)
+      setTotalIncome(data.totalIncome)
+      setLimitCheck(data.limitCheck)
+    }
+    setLoading(false)
+  }, [])
 
-	useEffect(() => {
+  useEffect(() => {
+    fetchIncomes()
+  }, [fetchIncomes, refreshTrigger])
+
+async function handleDelete(id: string) {
+	const res = await fetch(`/api/incomes?id=${id}`, { method: 'DELETE' })
+	if (res.ok) {
+		toast.success(dict.income.deleted_success)
 		fetchIncomes()
-	}, [fetchIncomes, refreshTrigger])
-
-	async function handleDelete(id: string) {
-		const res = await fetch(`/api/incomes?id=${id}`, { method: 'DELETE' })
-		if (res.ok) {
-			toast.success('Удалено')
-			fetchIncomes()
-		}
+	} else {
+		toast.error(dict.income.deleted_error)
 	}
+}
 
-	// Цвет прогресс-бара лимита
-	const limitColor =
-		limitCheck?.status === 'exceeded'
-			? 'bg-red-500'
-			: limitCheck?.status === 'critical'
-				? 'bg-orange-500'
-				: limitCheck?.status === 'warning'
-					? 'bg-yellow-500'
-					: 'bg-green-500'
+  const limitColor =
+    limitCheck?.status === 'exceeded'
+      ? 'bg-red-500'
+      : limitCheck?.status === 'critical'
+      ? 'bg-orange-500'
+      : limitCheck?.status === 'warning'
+      ? 'bg-yellow-500'
+      : 'bg-green-500'
 
-	return (
+  return (
 		<div className='space-y-4'>
 			{/* Лимит прогресс */}
 			{limitCheck && (
@@ -105,7 +117,7 @@ export default function IncomeHistory({ dict, refreshTrigger }: Props) {
 					</div>
 				) : incomes.length === 0 ? (
 					<div className='p-6 text-center text-base text-muted-foreground'>
-						{dict.employees.no_employees}
+						Записей пока нет
 					</div>
 				) : (
 					<div className='divide-y'>
@@ -123,12 +135,46 @@ export default function IncomeHistory({ dict, refreshTrigger }: Props) {
 										{income.note && ` · ${income.note}`}
 									</p>
 								</div>
-								<button
-									onClick={() => handleDelete(income.id)}
-									className='p-2 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-50'
-								>
-									<Trash2 className='w-4 h-4' />
-								</button>
+
+								{/* AlertDialog для удаления */}
+								<AlertDialog>
+									<AlertDialogTrigger asChild>
+										<button className='p-2 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-50'>
+											<Trash2 className='w-4 h-4' />
+										</button>
+									</AlertDialogTrigger>
+									<AlertDialogContent>
+										<AlertDialogHeader>
+											<AlertDialogTitle className='text-xl'>
+												{dict.income.delete_title}
+											</AlertDialogTitle>
+											<AlertDialogDescription className='text-base space-y-2'>
+												<span className='block'>
+													{dict.income.delete_description}{' '}
+													<span className='font-semibold text-foreground'>
+														{Number(income.amount).toLocaleString('ru-RU')} ₸
+													</span>{' '}
+													{dict.income.delete_date}{' '}
+													{new Date(income.date).toLocaleDateString('ru-RU')}
+												</span>
+												<span className='block text-red-500 font-medium'>
+													{dict.income.delete_warning}
+												</span>
+											</AlertDialogDescription>
+										</AlertDialogHeader>
+										<AlertDialogFooter>
+											<AlertDialogCancel className='text-base'>
+												{dict.income.delete_cancel}
+											</AlertDialogCancel>
+											<AlertDialogAction
+												onClick={() => handleDelete(income.id)}
+												className='bg-red-500 hover:bg-red-600 text-white text-base'
+											>
+												{dict.income.delete_confirm}
+											</AlertDialogAction>
+										</AlertDialogFooter>
+									</AlertDialogContent>
+								</AlertDialog>
 							</div>
 						))}
 					</div>

@@ -95,10 +95,19 @@
 		"amount": "Табыс сомасы",
 		"date": "Күні",
 		"category": "Санат",
-		"calculate": "Есептеу",
+		"calculate": "Қосылды",
 		"history": "Табыс тарихы",
 		"total": "Кезең бойынша жиыны",
-		"tax_estimate": "Алдын ала салық"
+		"tax_estimate": "Алдын ала салық",
+		"delete_title": "Табыс жазбасын жою керек пе?",
+		"delete_description": "Сомасы",
+		"delete_date": "күнгі",
+		"delete_warning": "⚠️ Бұл әрекетті болдырмау мүмкін емес. Жазба біржола жойылады.",
+		"delete_confirm": "Біржола жою",
+		"delete_cancel": "Болдырмау",
+		"deleted_success": "Жазба жойылды",
+		"deleted_error": "Жою кезінде қате",
+		"empty": "Жазбалар әлі жоқ"
 	},
 	"profile": {
 		"title": "Профиль",

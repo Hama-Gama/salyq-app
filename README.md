@@ -1,3 +1,12 @@
+1  kbk test
+
+git add .
+git commit --amend --no-edit
+git push origin develop --force
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

@@ -23,7 +23,6 @@ export default async function Navbar({ lang, dict, currentPath }: Props) {
 	const session = await auth()
 	const user = session?.user
 
-	// Всегда используем текущую локаль для ссылок
 	const prefix = `/${lang}`
 
 	const initials = user?.name
@@ -41,7 +40,8 @@ export default async function Navbar({ lang, dict, currentPath }: Props) {
 
 			<div className='flex-1' />
 
-			<LanguageSwitcher currentLang={lang} />
+			{/* Передаем текущий путь, чтобы switcher знал, где мы находимся */}
+			<LanguageSwitcher currentLang={lang} currentPath={currentPath} />
 
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>

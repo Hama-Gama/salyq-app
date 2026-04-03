@@ -1,0 +1,36 @@
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
+import { getDictionary } from '@/lib/dictionary'
+import type { Locale } from '@/types'
+import AppSidebar from './AppSidebar'
+import Navbar from './Navbar'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { headers } from 'next/headers'
+
+interface Props {
+	lang: Locale
+	children: React.ReactNode
+}
+
+export default async function PageLayout({ lang, children }: Props) {
+	const session = await auth()
+
+	if (!session) {
+		redirect(`/${lang}/login`)
+	}
+
+	const dict = await getDictionary(lang)
+	const headersList = await headers()
+	const fullPath = headersList.get('x-pathname') ?? '/dashboard'
+	const currentPath = fullPath.replace(`/${lang}`, '') || '/dashboard'
+
+	return (
+		<SidebarProvider>
+			<AppSidebar lang={lang} dict={dict} currentPath={currentPath} />
+			<SidebarInset className='flex flex-col min-h-screen bg-muted/30'>
+				<Navbar lang={lang} dict={dict} currentPath={currentPath} />
+				<main className='flex flex-1 flex-col'>{children}</main>
+			</SidebarInset>
+		</SidebarProvider>
+	)
+}

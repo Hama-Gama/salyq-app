@@ -75,5 +75,5 @@ export default auth(async request => {
 })
 
 export const config = {
-	matcher: ['/((?!_next/static|_next/image|assets|favicon.ico|sw.js).*)'],
+	matcher: ['/((?!_next/static|_next/image|assets|fonts|favicon.ico|sw.js).*)'],
 }

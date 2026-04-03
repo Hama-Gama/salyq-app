@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import type { Locale } from '@/types'
@@ -31,6 +32,12 @@ interface MonthlyData {
 	payments: number
 	total: number
 }
+
+
+const PDFDownloadButton = dynamic(
+	() => import('@/components/pdf/PDFDownloadButton'),
+	{ ssr: false },
+)
 
 export default function AnalyticsPage() {
 	const params = useParams()
@@ -137,13 +144,25 @@ export default function AnalyticsPage() {
 	return (
 		<div className='mx-auto w-full max-w-7xl p-3 md:p-6 space-y-6'>
 			{/* Заголовок */}
-			<div>
-				<h1 className='text-3xl font-bold'>{dict.nav.analytics}</h1>
-				<p className='text-base text-muted-foreground mt-1'>
-					{lang === 'ru'
-						? `Статистика за ${currentYear} год`
-						: `${currentYear} жылғы статистика`}
-				</p>
+			{/* Заголовок */}
+			<div className='flex items-center justify-between gap-4'>
+				<div>
+					<h1 className='text-3xl font-bold'>{dict.nav.analytics}</h1>
+					<p className='text-base text-muted-foreground mt-1'>
+						{lang === 'ru'
+							? `Статистика за ${currentYear} год`
+							: `${currentYear} жылғы статистика`}
+					</p>
+				</div>
+				{!loading && (
+					<PDFDownloadButton
+						lang={lang}
+						totalIncome={totalIncome}
+						period={`${currentYear}`}
+						buttonLabel={lang === 'ru' ? 'Скачать PDF' : 'PDF жүктеу'}
+						loadingLabel={lang === 'ru' ? 'Генерация...' : 'Жасалуда...'}
+					/>
+				)}
 			</div>
 
 			{/* Сводные карточки */}

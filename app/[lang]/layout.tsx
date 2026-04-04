@@ -18,22 +18,28 @@ export default async function LangLayout({
 	const { lang: langParam } = await params
 	const lang = langParam as Locale
 	const session = await auth()
-	
+
 	const dict = await getDictionary(lang)
-	
+
 	// Определяем путь для подсветки активных пунктов меню
-	
+
 	const headersList = await headers()
 	const fullPath = headersList.get('x-pathname') ?? `/${lang}/dashboard`
-	
+
 	// Убираем языковой префикс /ru или /kz
 	const currentPath = fullPath.replace(/^\/(ru|kz)/, '') || '/dashboard'
 
-	// Если сессии нет — на логин
-	if (!session && !fullPath.includes('/login')) {
+	// Если сессии нет — редиректим только если это не публичная страница
+	const isPublicPath =
+		fullPath.includes('/login') ||
+		fullPath === `/${lang}` ||
+		fullPath === '/' ||
+		fullPath === `/${lang}/`
+
+	if (!session && !isPublicPath) {
 		redirect(`/${lang}/login`)
 	}
-	
+
 	return (
 		<Providers>
 			<AppSidebar lang={lang} dict={dict} currentPath={currentPath} />

@@ -1,4 +1,10 @@
-1  kbk test
+1 kbk test
+2 language switche 1 lang
+3 qr code pdf link to web site
+4 samozanyatiy ?
+5 stress test
+6 check security 
+7 iin & name length validation,telegram activate
 
 git add .
 git commit --amend --no-edit

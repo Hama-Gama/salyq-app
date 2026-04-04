@@ -62,7 +62,8 @@
 		"status_soon": "Жақында",
 		"status_urgent": "Шұғыл",
 		"status_overdue": "Мерзімі өтті",
-		"status_paid": "Төленді"
+		"status_paid": "Төленді",
+		"status_ok": "Барлығы дұрыс"
 	},
 	"kbk": {
 		"title": "КБК және КНП анықтамалығы",

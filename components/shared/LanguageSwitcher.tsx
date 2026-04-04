@@ -4,28 +4,34 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
+// Обновляем интерфейс, добавляя currentPath как необязательный или обязательный параметр
 export default function LanguageSwitcher({
 	currentLang,
+	currentPath, // Добавляем сюда, чтобы Navbar не ругался
 }: {
 	currentLang: string
+	currentPath?: string // Добавляем поддержку пропса из Navbar
 }) {
 	const pathname = usePathname()
 
 	const getNewPath = (newLang: string) => {
-		if (!pathname) return `/${newLang}`
+		// Приоритет отдаем pathname из хука, если его нет — берем из пропса
+		const activePath = pathname || currentPath || ''
 
-		const segments = pathname.split('/')
+		if (!activePath) return `/${newLang}`
+
+		const segments = activePath.split('/')
 
 		// Проверяем, есть ли уже локаль в URL (ru или kz)
-		// Твой proxy.ts ожидает именно эти два варианта
 		if (segments[1] === 'ru' || segments[1] === 'kz') {
 			segments[1] = newLang
 		} else {
-			// Если зашли по прямому пути без префикса (например /employees)
+			// Если зашли по прямому пути без префикса
 			segments.splice(1, 0, newLang)
 		}
 
-		return segments.join('/') || '/'
+		const finalPath = segments.join('/')
+		return finalPath === '' ? `/${newLang}` : finalPath
 	}
 
 	return (
@@ -44,7 +50,6 @@ export default function LanguageSwitcher({
 				className='h-7 px-2.5 text-[10px] font-bold'
 				asChild
 			>
-				{/* Теперь строго KZ, как в твоем proxy.ts */}
 				<Link href={getNewPath('kz')}>KZ</Link>
 			</Button>
 		</div>

@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
 
 	return (
 		<div className='mx-auto w-full max-w-7xl p-3 md:p-6 space-y-6'>
-			{/* Заголовок */}
+			{' '}
 			{/* Заголовок */}
 			<div className='flex items-center justify-between gap-4'>
 				<div>
@@ -164,7 +164,6 @@ export default function AnalyticsPage() {
 					/>
 				)}
 			</div>
-
 			{/* Сводные карточки */}
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
 				<div className='bg-background rounded-xl border p-6'>
@@ -200,7 +199,6 @@ export default function AnalyticsPage() {
 					</p>
 				</div>
 			</div>
-
 			{/* Прогресс лимита */}
 			{limitCheck && (
 				<div className='bg-background rounded-xl border p-6'>
@@ -228,7 +226,6 @@ export default function AnalyticsPage() {
 					</div>
 				</div>
 			)}
-
 			{/* График доходов по месяцам */}
 			<div className='bg-background rounded-xl border p-6'>
 				<h2 className='text-xl font-semibold mb-6'>
@@ -253,7 +250,19 @@ export default function AnalyticsPage() {
 								tickFormatter={v => (v > 0 ? `${(v / 1000).toFixed(0)}к` : '0')}
 							/>
 							<Tooltip
-								formatter={(value: number) => formatTenge(value)}
+								formatter={(
+									value:
+										| number
+										| string
+										| readonly (number | string)[]
+										| undefined,
+								) => {
+									if (value === undefined) return ''
+									// Мы приводим к Number, так как formatTenge ожидает число
+									return formatTenge(
+										Number(Array.isArray(value) ? value[0] : value),
+									)
+								}}
 								labelStyle={{ fontSize: 14 }}
 								contentStyle={{ fontSize: 14 }}
 							/>
@@ -267,7 +276,6 @@ export default function AnalyticsPage() {
 					</ResponsiveContainer>
 				)}
 			</div>
-
 			{/* График налогов и платежей */}
 			<div className='bg-background rounded-xl border p-6'>
 				<h2 className='text-xl font-semibold mb-6'>
@@ -294,7 +302,19 @@ export default function AnalyticsPage() {
 								tickFormatter={v => (v > 0 ? `${(v / 1000).toFixed(0)}к` : '0')}
 							/>
 							<Tooltip
-								formatter={(value: number) => formatTenge(value)}
+								formatter={(
+									value:
+										| number
+										| string
+										| readonly (number | string)[]
+										| undefined,
+								) => {
+									if (value === undefined) return ''
+									const numericValue = Array.isArray(value)
+										? Number(value[0])
+										: Number(value)
+									return formatTenge(numericValue)
+								}}
 								labelStyle={{ fontSize: 14 }}
 								contentStyle={{ fontSize: 14 }}
 							/>
@@ -327,7 +347,6 @@ export default function AnalyticsPage() {
 					</ResponsiveContainer>
 				)}
 			</div>
-
 			{/* Детальная таблица */}
 			<div className='bg-background rounded-xl border overflow-hidden'>
 				<div className='p-6 border-b'>

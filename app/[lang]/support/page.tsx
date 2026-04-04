@@ -50,13 +50,15 @@ export default function SupportPage() {
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
 
+		if (!dict) return
+
 		if (isFormInvalid) {
 			toast.error(dict.errors.required)
 			return
 		}
 
 		if (type === 'TAX_HELP') {
-			toast.info(dict.support.tax_redirect)
+			toast.info(dict.support.tax_redirect) // Теперь TS знает, что dict тут есть
 			return
 		}
 

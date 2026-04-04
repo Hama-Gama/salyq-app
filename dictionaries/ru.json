@@ -62,7 +62,8 @@
 		"status_soon": "Скоро",
 		"status_urgent": "Срочно",
 		"status_overdue": "Просрочено",
-		"status_paid": "Оплачено"
+		"status_paid": "Оплачено",
+		"status_ok": "Всё в порядке"
 	},
 	"kbk": {
 		"title": "Справочник КБК и КНП",

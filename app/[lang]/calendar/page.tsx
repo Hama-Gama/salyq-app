@@ -109,10 +109,12 @@ export default function CalendarPage() {
 		grouped[key].push(d)
 	})
 
-	function copyToClipboard(text: string, label: string) {
-		navigator.clipboard.writeText(text)
+function copyToClipboard(text: string, label: string) {
+	navigator.clipboard.writeText(text)
+	if (dict) {
 		toast.success(`${label}: ${text} — ${dict.payments.copied}`)
 	}
+}
 
 	function getStatusIcon(date: Date) {
 		const status = getDeadlineStatus(date)
@@ -128,11 +130,17 @@ export default function CalendarPage() {
 	function getStatusText(date: Date) {
 		const status = getDeadlineStatus(date)
 		const days = getDaysUntilDeadline(date)
+
+		// Защита от null
+		if (!dict) return ''
+
 		if (status === 'overdue') return dict.calendar.status_overdue
 		if (status === 'urgent')
 			return `${dict.calendar.status_urgent} — ${days} ${dict.dashboard.days_left}`
 		if (status === 'warning') return `${days} ${dict.dashboard.days_left}`
-		return dict.calendar.status_upcoming
+
+		// Теперь TS увидит этот ключ после обновления JSON
+		return dict.calendar.status_ok
 	}
 
 	function getStatusBg(date: Date) {

@@ -41,12 +41,16 @@ export default async function LangLayout({
 	}
 
 	return (
-		<Providers>
-			<AppSidebar lang={lang} dict={dict} currentPath={currentPath} />
-			<SidebarInset className='flex flex-col min-h-screen bg-muted/30'>
-				<Navbar lang={lang} dict={dict} currentPath={currentPath} />
-				<main className='flex flex-1 flex-col'>{children}</main>
-			</SidebarInset>
-		</Providers>
+		<html lang={lang} suppressHydrationWarning>
+			<body>
+				<Providers>
+					<AppSidebar lang={lang} dict={dict} currentPath={currentPath} />
+					<SidebarInset className='flex flex-col min-h-screen bg-muted/30'>
+						<Navbar lang={lang} dict={dict} currentPath={currentPath} />
+						<main className='flex flex-1 flex-col'>{children}</main>
+					</SidebarInset>
+				</Providers>
+			</body>
+		</html>
 	)
 }

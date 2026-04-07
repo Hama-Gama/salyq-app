@@ -6,6 +6,7 @@
 6 check security 
 7 iin & name length validation,telegram activate
 8 check sanity
+9 paste telegram chat id in input profile  remove space (trim)
 
 
 git add .

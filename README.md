@@ -5,6 +5,8 @@
 5 stress test
 6 check security 
 7 iin & name length validation,telegram activate
+8 check sanity
+
 
 git add .
 git commit --amend --no-edit

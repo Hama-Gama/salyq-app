@@ -437,6 +437,26 @@ export default async function LandingPage({
 				</div>
 			</section>
 
+			{/* Временная кнопка для теста Sentry */}
+			<section className='py-8 bg-red-50/50 border-y border-red-100'>
+				<div className='text-center'>
+					<p className='text-sm text-red-600 mb-2 font-mono'>
+						Debug Mode: Sentry Test
+					</p>
+					<button
+						onClick={() => {
+							// Эта строка вызовет ошибку, которую Sentry поймает в браузере
+							throw new Error(
+								'SalyqApp Client Test Error: ' + new Date().toISOString(),
+							)
+						}}
+						className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium'
+					>
+						Вызвать ошибку (Test Sentry)
+					</button>
+				</div>
+			</section>
+
 			{/* Футер */}
 			<footer className='border-t py-8'>
 				<div className='mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4'>

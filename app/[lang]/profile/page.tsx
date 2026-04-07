@@ -174,11 +174,19 @@ export default function ProfilePage() {
 						<p className='text-base text-muted-foreground mt-1'>
 							{lang === 'ru' ? (
 								<>
+<<<<<<< HEAD
 									Узнай свой ID написав <b>@salyqappbot</b> команду /myid
 								</>
 							) : (
 								<>
 									ID-ңды білу үшін <b>@salyqappbot</b> ботына /myid жаз
+=======
+									Узнай свой ID написав <b>@salyqapp_bot</b> команду /myid
+								</>
+							) : (
+								<>
+									ID-ңды білу үшін <b>@salyqapp_bot</b> ботына /myid жаз
+>>>>>>> 6d1976739786a632e76eb4f789eff85b82768dfe
 								</>
 							)}
 						</p>

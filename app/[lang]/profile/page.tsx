@@ -172,7 +172,15 @@ export default function ProfilePage() {
 							className='w-full border rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary'
 						/>
 						<p className='text-base text-muted-foreground mt-1'>
-							{dict.profile.telegram_hint}
+							{lang === 'ru' ? (
+								<>
+									Узнай свой ID написав <b>@salyqapp_bot</b> команду /myid
+								</>
+							) : (
+								<>
+									ID-ңды білу үшін <b>@salyqapp_bot</b> ботына /myid жаз
+								</>
+							)}
 						</p>
 					</div>
 

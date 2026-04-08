@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { sendDeadlineReminder } from '@/lib/telegram'
 
-// Функция расчета дней до 25-го числа
+// Расчет дней до 25-го числа
 function getDaysUntilDeadline() {
 	const now = new Date()
 	const year = now.getFullYear()
@@ -23,19 +23,19 @@ function getDaysUntilDeadline() {
 async function handler() {
 	const daysLeft = getDaysUntilDeadline()
 
-	// Уведомляем за неделю, за 3 дня, за день и в день дедлайна
+	// Тестовое: сегодня 8 апреля, до 25-го осталось 17 дней.
+	// Добавь 17 в массив ниже, если хочешь проверить ПРЯМО СЕЙЧАС.
 	const notifyDays = [17, 7, 3, 1, 0]
 
 	if (!notifyDays.includes(daysLeft)) {
 		return NextResponse.json({
 			ok: true,
-			message: `Уведомления не требуются. До 25-го числа осталось: ${daysLeft} дн.`,
+			message: `Сегодня без уведомлений. Дней до дедлайна: ${daysLeft}`,
 		})
 	}
 
 	const supabase = await createClient()
 
-	// Тянем всех, у кого заполнен tgChatId
 	const { data: users, error } = await supabase
 		.from('profiles')
 		.select('tgChatId, name, language')
@@ -47,27 +47,22 @@ async function handler() {
 	}
 
 	if (!users || users.length === 0) {
-		return NextResponse.json({
-			ok: true,
-			message: 'Нет пользователей с привязанным TG',
-		})
+		return NextResponse.json({ ok: true, message: 'Нет пользователей' })
 	}
 
 	let sent = 0
 	let failed = 0
 
-	// Красиво форматируем дату для сообщения
+	// Форматируем дату для сообщения (например, "25 апреля")
 	const deadlineDate = new Date()
 	deadlineDate.setDate(25)
 	if (new Date().getDate() > 25)
 		deadlineDate.setMonth(deadlineDate.getMonth() + 1)
-
 	const deadlineStr = deadlineDate.toLocaleDateString('ru-RU', {
 		day: 'numeric',
 		month: 'long',
 	})
 
-	// Рассылка
 	for (const user of users) {
 		if (!user.tgChatId) continue
 
@@ -84,8 +79,6 @@ async function handler() {
 		else failed++
 	}
 
-	console.log(`[Cron] Рассылка завершена. Успешно: ${sent}, Ошибок: ${failed}`)
-
 	return NextResponse.json({
 		ok: true,
 		sent,
@@ -95,5 +88,4 @@ async function handler() {
 	})
 }
 
-// Защита роута от посторонних вызовов через Upstash Signature
 export const POST = verifySignatureAppRouter(handler)

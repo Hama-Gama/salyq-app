@@ -1,48 +1,73 @@
+// app/api/cron/reminders/route.ts
+
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs'
-import { prisma } from '@/lib/prisma'
+import { NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 import { sendDeadlineReminder } from '@/lib/telegram'
-import {
-	getMonthlyDeadline,
-	getDaysUntilDeadline,
-	formatDeadline,
-} from '@/lib/deadlines'
-import { calculateSelfPayments } from '@/lib/calculations'
+
+// Функция расчета дней до 25-го числа
+function getDaysUntilDeadline() {
+	const now = new Date()
+	const year = now.getFullYear()
+	const month = now.getMonth()
+	const deadline = new Date(year, month, 25)
+
+	if (now > deadline) {
+		deadline.setMonth(deadline.getMonth() + 1)
+	}
+
+	const diffTime = deadline.getTime() - now.getTime()
+	return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
 
 async function handler() {
-	const now = new Date()
-	const currentMonth = now.getMonth() + 1
-	const currentYear = now.getFullYear()
+	const daysLeft = getDaysUntilDeadline()
 
-	// Получаем ближайший дедлайн
-	const deadline = getMonthlyDeadline(currentYear, currentMonth)
-	const daysLeft = getDaysUntilDeadline(deadline)
-	const deadlineStr = formatDeadline(deadline)
+	// Уведомляем за неделю, за 3 дня, за день и в день дедлайна
+	const notifyDays = [17, 7, 3, 1, 0]
 
-	// Отправляем только за 7, 3, 1 день и в день дедлайна
-	const notifyDays = [7, 3, 1, 0]
 	if (!notifyDays.includes(daysLeft)) {
-		return Response.json({
+		return NextResponse.json({
 			ok: true,
-			message: `No reminders today. Days left: ${daysLeft}`,
+			message: `Уведомления не требуются. До 25-го числа осталось: ${daysLeft} дн.`,
 		})
 	}
 
-	// Получаем всех пользователей с tgChatId
-	const users = await prisma.user.findMany({
-		where: {
-			tgChatId: { not: null },
-		},
-		select: {
-			id: true,
-			tgChatId: true,
-			language: true,
-		},
-	})
+	const supabase = await createClient()
 
-	const selfPayments = calculateSelfPayments(85_000)
+	// Тянем всех, у кого заполнен tgChatId
+	const { data: users, error } = await supabase
+		.from('profiles')
+		.select('tgChatId, name, language')
+		.not('tgChatId', 'is', null)
+
+	if (error) {
+		console.error('Supabase error:', error)
+		return NextResponse.json({ error: 'Database error' }, { status: 500 })
+	}
+
+	if (!users || users.length === 0) {
+		return NextResponse.json({
+			ok: true,
+			message: 'Нет пользователей с привязанным TG',
+		})
+	}
+
 	let sent = 0
 	let failed = 0
 
+	// Красиво форматируем дату для сообщения
+	const deadlineDate = new Date()
+	deadlineDate.setDate(25)
+	if (new Date().getDate() > 25)
+		deadlineDate.setMonth(deadlineDate.getMonth() + 1)
+
+	const deadlineStr = deadlineDate.toLocaleDateString('ru-RU', {
+		day: 'numeric',
+		month: 'long',
+	})
+
+	// Рассылка
 	for (const user of users) {
 		if (!user.tgChatId) continue
 
@@ -52,7 +77,6 @@ async function handler() {
 			user.tgChatId,
 			daysLeft,
 			deadlineStr,
-			selfPayments.total,
 			lang,
 		)
 
@@ -60,11 +84,9 @@ async function handler() {
 		else failed++
 	}
 
-	console.log(
-		`Reminders sent: ${sent}, failed: ${failed}, days left: ${daysLeft}`,
-	)
+	console.log(`[Cron] Рассылка завершена. Успешно: ${sent}, Ошибок: ${failed}`)
 
-	return Response.json({
+	return NextResponse.json({
 		ok: true,
 		sent,
 		failed,
@@ -73,5 +95,5 @@ async function handler() {
 	})
 }
 
-// Верифицируем подпись QStash
+// Защита роута от посторонних вызовов через Upstash Signature
 export const POST = verifySignatureAppRouter(handler)

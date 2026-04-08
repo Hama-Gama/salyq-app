@@ -73,3 +73,48 @@ export function getDeadlineStatus(deadline: Date): DeadlineStatus {
 	if (days <= 3) return 'warning'
 	return 'safe'
 }
+
+// Экспортируем функции для использования в других частях приложения
+export function getMonthlyDeadline(year: number, month: number): Date {
+	return new Date(year, month - 1, 25, 23, 59, 59)
+}
+
+export function getDaysUntilDeadline(deadline: Date): number {
+	const now = new Date()
+	const diffTime = deadline.getTime() - now.getTime()
+	return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
+
+export function formatDeadline(deadline: Date): string {
+	return deadline.toLocaleDateString('ru-RU', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric',
+	})
+}
+
+function calculateMonthlyDeadline(): Date {
+	const today = new Date()
+	const currentMonth = today.getMonth()
+	const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1
+	const year = today.getFullYear()
+	const deadlineDate = new Date(year, nextMonth, 25)
+	// If today is past the 25th of the current month, set deadline for next month
+	return today.getDate() > 25 ? deadlineDate : new Date(year, currentMonth, 25)
+}
+
+function getDaysUntilDeadline(): number {
+	const deadline = calculateMonthlyDeadline()
+	const today = new Date()
+	const timeDiff = deadline.getTime() - today.getTime()
+	return Math.ceil(timeDiff / (1000 * 3600 * 24)) // Convert milliseconds to days
+}
+
+function formatDeadlineDate(): string {
+	const deadline = calculateMonthlyDeadline()
+	return deadline.toLocaleDateString('en-KZ', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	})
+}

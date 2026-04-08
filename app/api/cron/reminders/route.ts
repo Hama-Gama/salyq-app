@@ -1,34 +1,77 @@
-import { CronJob } from 'cron';
-import axios from 'axios';
+import { verifySignatureAppRouter } from '@upstash/qstash/nextjs'
+import { prisma } from '@/lib/prisma'
+import { sendDeadlineReminder } from '@/lib/telegram'
+import {
+	getMonthlyDeadline,
+	getDaysUntilDeadline,
+	formatDeadline,
+} from '@/lib/deadlines'
+import { calculateSelfPayments } from '@/lib/calculations'
 
-// Define the CronJob to run every day at 10 AM UTC
-const job = new CronJob('0 10 * * *', async () => {
-    // Logic to check deadlines
-    const deadlines = await checkDeadlines();
-    if (deadlines.length > 0) {
-        // Send notifications if there are deadlines
-        await sendTelegramNotifications(deadlines);
-    }
-}, null, true, 'UTC');
+async function handler() {
+	const now = new Date()
+	const currentMonth = now.getMonth() + 1
+	const currentYear = now.getFullYear()
 
-// Function to check deadlines (placeholder implementation)
-async function checkDeadlines() {
-    // Replace this with actual logic to check deadlines from your data source
-    return ["Deadline 1", "Deadline 2"]; // Example deadlines
+	// Получаем ближайший дедлайн
+	const deadline = getMonthlyDeadline(currentYear, currentMonth)
+	const daysLeft = getDaysUntilDeadline(deadline)
+	const deadlineStr = formatDeadline(deadline)
+
+	// Отправляем только за 7, 3, 1 день и в день дедлайна
+	const notifyDays = [7, 3, 1, 0]
+	if (!notifyDays.includes(daysLeft)) {
+		return Response.json({
+			ok: true,
+			message: `No reminders today. Days left: ${daysLeft}`,
+		})
+	}
+
+	// Получаем всех пользователей с tgChatId
+	const users = await prisma.user.findMany({
+		where: {
+			tgChatId: { not: null },
+		},
+		select: {
+			id: true,
+			tgChatId: true,
+			language: true,
+		},
+	})
+
+	const selfPayments = calculateSelfPayments(85_000)
+	let sent = 0
+	let failed = 0
+
+	for (const user of users) {
+		if (!user.tgChatId) continue
+
+		const lang = (user.language === 'kz' ? 'kz' : 'ru') as 'ru' | 'kz'
+
+		const success = await sendDeadlineReminder(
+			user.tgChatId,
+			daysLeft,
+			deadlineStr,
+			selfPayments.total,
+			lang,
+		)
+
+		if (success) sent++
+		else failed++
+	}
+
+	console.log(
+		`Reminders sent: ${sent}, failed: ${failed}, days left: ${daysLeft}`,
+	)
+
+	return Response.json({
+		ok: true,
+		sent,
+		failed,
+		daysLeft,
+		deadline: deadlineStr,
+	})
 }
 
-// Function to send notifications via Telegram
-async function sendTelegramNotifications(deadlines) {
-    const telegramChatId = 'YOUR_TELEGRAM_CHAT_ID';
-    const telegramBotToken = 'YOUR_TELEGRAM_BOT_TOKEN';
-
-    for (const deadline of deadlines) {
-        await axios.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-            chat_id: telegramChatId,
-            text: `Reminder: ${deadline}`
-        });
-    }
-}
-
-// Start the job
-job.start();
+// Верифицируем подпись QStash
+export const POST = verifySignatureAppRouter(handler)

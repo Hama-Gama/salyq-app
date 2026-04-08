@@ -1,19 +1,7 @@
-1 kbk test
-2 language switche 1 lang
-3 qr code pdf link to web site
-4 samozanyatiy ?
-5 stress test
-6 check security 
-7 iin & name length validation,telegram activate
-8 check sanity
-9 paste telegram chat id in input profile  remove space (trim)
 
 
-git add .
 git commit --amend --no-edit
 git push origin develop --force
-
-
 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).

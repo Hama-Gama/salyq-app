@@ -164,6 +164,34 @@ export default function ProfilePage() {
 						<label className='block text-base font-medium mb-2'>
 							{dict.profile.telegram}
 						</label>
+
+						{/* Добавляем кнопку быстрой связи */}
+						<div className='mb-3'>
+							<a
+								href='https://t.me/salyqappbot?start=getid'
+								target='_blank'
+								rel='noopener noreferrer'
+								className='inline-flex items-center gap-2 px-4 py-2 bg-[#229ED9] text-white rounded-lg text-sm font-medium hover:bg-[#1c8adb] transition-colors'
+							>
+								<svg
+									width='20'
+									height='20'
+									viewBox='0 0 24 24'
+									fill='none'
+									stroke='currentColor'
+									strokeWidth='2'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+								>
+									<path d='m22 2-7 20-4-9-9-4Z' />
+									<path d='M22 2 11 13' />
+								</svg>
+								{lang === 'ru'
+									? 'Открыть бота @salyqappbot'
+									: 'Ботты ашу @salyqappbot'}
+							</a>
+						</div>
+
 						<input
 							type='text'
 							value={tgChatId}
@@ -171,22 +199,15 @@ export default function ProfilePage() {
 							placeholder={dict.profile.telegram_placeholder}
 							className='w-full border rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary'
 						/>
-						<p className='text-base text-muted-foreground mt-1'>
+						<p className='text-base text-muted-foreground mt-2'>
 							{lang === 'ru' ? (
 								<>
-<<<<<<< HEAD
-									Узнай свой ID написав <b>@salyqappbot</b> команду /myid
+									Нажми на кнопку выше, запусти бота. Затем скопируй полученный номер сюда.
 								</>
 							) : (
 								<>
-									ID-ңды білу үшін <b>@salyqappbot</b> ботына /myid жаз
-=======
-									Узнай свой ID написав <b>@salyqapp_bot</b> команду /myid
-								</>
-							) : (
-								<>
-									ID-ңды білу үшін <b>@salyqapp_bot</b> ботына /myid жаз
->>>>>>> 6d1976739786a632e76eb4f789eff85b82768dfe
+									Жоғарыдағы батырманы басып, ботты іске қосып. Содан кейін алынған нөмірді
+									осында көшір.
 								</>
 							)}
 						</p>

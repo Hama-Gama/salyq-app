@@ -11,6 +11,7 @@ import {
 	User,
 	HelpCircle,
 	Settings,
+	CreditCard,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -24,6 +25,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 	user: User,
 	'help-circle': HelpCircle,
 	settings: Settings,
+	'credit-card': CreditCard,
 }
 
 interface Props {

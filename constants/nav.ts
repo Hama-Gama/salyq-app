@@ -8,6 +8,7 @@ export const NAV_ITEMS: NavItem[] = [
 	{ href: '/kbk', labelKey: 'nav.kbk', icon: 'book-open' },
 	{ href: '/profile', labelKey: 'nav.profile', icon: 'user' },
 	{ href: '/support', labelKey: 'nav.support', icon: 'help-circle' },
+	{ href: '/pricing', labelKey: 'nav.pricing', icon: 'credit-card' },
 ]
 
 export const ADMIN_NAV_ITEMS: NavItem[] = [

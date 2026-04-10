@@ -166,17 +166,19 @@
 	"pricing": {
 		"title": "Тарифы",
 		"subtitle": "Выберите подходящий план",
-		"free_name": "Старт",
-		"pro_name": "Профи",
-		"business_name": "Бизнес",
-		"free_price": "0 ₸",
-		"pro_price": "3 900 ₸/мес",
-		"business_price": "39 000 ₸/год",
-		"try_free": "Попробовать 7 дней бесплатно",
+		"try_free": "Попробовать бесплатно",
 		"current_plan": "Текущий план",
 		"promo_placeholder": "Введите промокод",
 		"promo_apply": "Применить",
-		"promo_success": "Промокод активирован!"
+		"promo_success": "Промокод активирован!",
+		"per_month": "в месяц",
+		"per_year": "в год",
+		"popular": "Популярный",
+		"savings": "Экономия",
+		"free_trial": "дней бесплатно",
+		"free_name": "Бесплатно", 
+    "free_price": "0",        
+    "standard_name": "Стандарт"
 	},
 	"errors": {
 		"required": "Обязательное поле",

@@ -166,17 +166,19 @@
 	"pricing": {
 		"title": "Тарифтер",
 		"subtitle": "Қолайлы жоспарды таңдаңыз",
-		"free_name": "Старт",
-		"pro_name": "Про",
-		"business_name": "Бизнес",
-		"free_price": "0 ₸",
-		"pro_price": "3 900 ₸/ай",
-		"business_price": "39 000 ₸/жыл",
-		"try_free": "7 күн тегін байқап көру",
+		"try_free": "Тегін байқап көру",
 		"current_plan": "Ағымдағы жоспар",
 		"promo_placeholder": "Промокод енгізіңіз",
 		"promo_apply": "Қолдану",
-		"promo_success": "Промокод белсендірілді!"
+		"promo_success": "Промокод белсендірілді!",
+		"per_month": "айына",
+		"per_year": "жылына",
+		"popular": "Танымал",
+		"savings": "Үнемдеу",
+		"free_trial": "күн тегін",
+    "free_name": "Тегін",
+    "free_price": "0",
+    "standard_name": "Стандарт"
 	},
 	"errors": {
 		"required": "Міндетті өріс",

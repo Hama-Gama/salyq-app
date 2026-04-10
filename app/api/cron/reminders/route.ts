@@ -25,7 +25,7 @@ async function handler() {
 
 	// Тестовое: сегодня 8 апреля, до 25-го осталось 17 дней.
 	// Добавь 17 в массив ниже, если хочешь проверить ПРЯМО СЕЙЧАС.
-	const notifyDays = [17, 7, 3, 1, 0]
+	const notifyDays = [14, 7, 3, 1, 0]
 
 	if (!notifyDays.includes(daysLeft)) {
 		return NextResponse.json({

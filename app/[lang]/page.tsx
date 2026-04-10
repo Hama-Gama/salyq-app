@@ -15,30 +15,25 @@ import {
 	ChevronDown,
 } from 'lucide-react'
 import { Metadata } from 'next'
-
+// Импортируем конфиг и хелпер цен
+import { PRICING_CONFIG, formatPrice } from '@/constants/pricing-config'
 
 export async function generateMetadata({
 	params,
 }: {
 	params: Promise<{ lang: string }>
 }): Promise<Metadata> {
-	const { lang } = await params // Раскрываем Promise
-
-	// Определяем заголовки в зависимости от языка
+	const { lang } = await params
 	const title =
 		lang === 'ru'
 			? 'SalyqApp — Налоги ИП Казахстана 2026'
 			: 'SalyqApp — Қазақстан ЖК салықтары 2026'
-
 	const description =
 		lang === 'ru'
 			? 'Автоматический расчёт налогов, ОПВ, СО и отчеты для ИП на упрощенке.'
 			: 'Оңайлатылған декларациядағы ЖК үшін салықтарды, МЗЖ, ӘА автоматты есептеу.'
 
-	return {
-		title,
-		description,
-	}
+	return { title, description }
 }
 
 export default async function LandingPage({
@@ -49,7 +44,6 @@ export default async function LandingPage({
 	const { lang: langParam } = await params
 	const lang = langParam as Locale
 
-	// Если авторизован — редирект на dashboard
 	const session = await auth()
 	if (session) {
 		redirect(`/${lang}/dashboard`)
@@ -57,6 +51,8 @@ export default async function LandingPage({
 
 	const dict = await getDictionary(lang)
 	const prefix = lang === 'kz' ? '/kz' : ''
+	// Хелпер для определения ключа языка в конфиге
+	const configLang = lang === 'kz' ? 'kz' : 'ru'
 
 	const features = [
 		{
@@ -97,7 +93,7 @@ export default async function LandingPage({
 			desc:
 				lang === 'ru'
 					? 'Напомним о дедлайнах за 7, 3 и 1 день до срока'
-					: 'Мерзімге дейін 7, 3 және 1 күн бұрын хабарлаймыз',
+					: 'Мерзімге дойін 7, 3 және 1 күн бұрын хабарлаймыз',
 		},
 		{
 			icon: Shield,
@@ -109,69 +105,29 @@ export default async function LandingPage({
 		},
 	]
 
+	// ПЕРЕПИСАННЫЙ БЛОК ТАРИФОВ
 	const plans = [
 		{
-			name: dict.pricing.free_name,
-			price: dict.pricing.free_price,
+			name: PRICING_CONFIG.free[`name_${configLang}`],
+			price: formatPrice(PRICING_CONFIG.free.price_monthly, configLang),
 			period: '',
-			features:
-				lang === 'ru'
-					? [
-							'Расчёт налогов',
-							'Календарь дедлайнов',
-							'Справочник КБК',
-							'До 3 сотрудников',
-						]
-					: [
-							'Салық есебі',
-							'Мерзімдер күнтізбесі',
-							'КБК анықтамалығы',
-							'3 қызметкерге дейін',
-						],
+			features: PRICING_CONFIG.free[`features_${configLang}`],
 			cta: lang === 'ru' ? 'Начать бесплатно' : 'Тегін бастау',
 			highlight: false,
 		},
 		{
-			name: dict.pricing.pro_name,
-			price: dict.pricing.pro_price,
-			period: dict.common.per_month,
-			features:
-				lang === 'ru'
-					? [
-							'Всё из Старт',
-							'PDF отчёты',
-							'Telegram уведомления',
-							'Неограниченно сотрудников',
-							'Аналитика',
-						]
-					: [
-							'Старттан бәрі',
-							'PDF есептер',
-							'Telegram хабарландырулар',
-							'Шексіз қызметкерлер',
-							'Аналитика',
-						],
+			name: PRICING_CONFIG.pro[`name_${configLang}`],
+			price: formatPrice(PRICING_CONFIG.pro.price_monthly, configLang),
+			period: dict.pricing.per_month,
+			features: PRICING_CONFIG.pro[`features_${configLang}`],
 			cta: lang === 'ru' ? 'Попробовать 7 дней' : '7 күн байқап көру',
 			highlight: true,
 		},
 		{
-			name: dict.pricing.business_name,
-			price: dict.pricing.business_price,
-			period: dict.common.per_year,
-			features:
-				lang === 'ru'
-					? [
-							'Всё из Профи',
-							'Приоритетная поддержка',
-							'Экономия 20%',
-							'Ранний доступ к функциям',
-						]
-					: [
-							'Профидан бәрі',
-							'Басым қолдау',
-							'20% үнемдеу',
-							'Функцияларға ерте қол жеткізу',
-						],
+			name: PRICING_CONFIG.business[`name_${configLang}`],
+			price: formatPrice(PRICING_CONFIG.business.price_yearly, configLang),
+			period: dict.pricing.per_year,
+			features: PRICING_CONFIG.business[`features_${configLang}`],
 			cta: lang === 'ru' ? 'Выбрать Бизнес' : 'Бизнесті таңдау',
 			highlight: false,
 		},
@@ -200,10 +156,9 @@ export default async function LandingPage({
 					</div>
 
 					<div className='flex items-center gap-3'>
-						{/* Переключатель языка */}
 						<div className='flex gap-1 bg-muted/50 p-1 rounded-lg border'>
 							<Link
-								href={`/${prefix ? '' : 'ru'}${prefix ? '' : ''}`}
+								href={`/${prefix ? '' : 'ru'}`}
 								className={`px-3 py-1 rounded-md text-base font-medium transition-colors ${
 									lang === 'ru'
 										? 'bg-background shadow-sm'
@@ -276,42 +231,14 @@ export default async function LandingPage({
 						{lang === 'ru' ? 'Узнать больше' : 'Көбірек білу'}
 					</Link>
 				</div>
-
-				{/* Статистика */}
-				<div className='grid grid-cols-3 gap-6 max-w-lg mx-auto mt-16'>
-					<div>
-						<p className='text-3xl font-bold'>4%</p>
-						<p className='text-base text-muted-foreground mt-1'>
-							{lang === 'ru' ? 'налог ИП' : 'ЖК салығы'}
-						</p>
-					</div>
-					<div>
-						<p className='text-3xl font-bold'>21 675₸</p>
-						<p className='text-base text-muted-foreground mt-1'>
-							{lang === 'ru' ? 'мин. платёж/мес' : 'мин. төлем/ай'}
-						</p>
-					</div>
-					<div>
-						<p className='text-3xl font-bold'>2026</p>
-						<p className='text-base text-muted-foreground mt-1'>
-							{lang === 'ru' ? 'актуальные данные' : 'өзекті деректер'}
-						</p>
-					</div>
-				</div>
 			</section>
 
 			{/* Возможности */}
 			<section id='features' className='bg-muted/30 py-16'>
 				<div className='mx-auto max-w-7xl px-4'>
-					<h2 className='text-3xl font-bold text-center mb-4'>
+					<h2 className='text-3xl font-bold text-center mb-12'>
 						{lang === 'ru' ? 'Всё что нужно ИП' : 'ЖК-ға қажетті барлық нәрсе'}
 					</h2>
-					<p className='text-base text-muted-foreground text-center mb-12'>
-						{lang === 'ru'
-							? 'Один сервис вместо Excel, бухгалтера и напоминалок в телефоне'
-							: 'Excel, бухгалтер және телефондағы еске салғыштардың орнына бір сервис'}
-					</p>
-
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
 						{features.map((f, i) => (
 							<div key={i} className='bg-background rounded-xl border p-6'>
@@ -348,7 +275,7 @@ export default async function LandingPage({
 							>
 								{plan.highlight && (
 									<div className='absolute -top-3 left-1/2 -translate-x-1/2'>
-										<span className='bg-primary text-primary-foreground px-3 py-1 rounded-full text-base font-medium'>
+										<span className='bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium'>
 											{lang === 'ru' ? 'Популярный' : 'Танымал'}
 										</span>
 									</div>
@@ -366,7 +293,7 @@ export default async function LandingPage({
 
 								<ul className='space-y-3 mb-6'>
 									{plan.features.map((feat, j) => (
-										<li key={j} className='flex items-center gap-2 text-base'>
+										<li key={j} className='flex items-center gap-2 text-sm'>
 											<CheckCircle className='w-4 h-4 text-green-500 shrink-0' />
 											{feat}
 										</li>
@@ -375,7 +302,7 @@ export default async function LandingPage({
 
 								<Link
 									href={`${prefix}/login`}
-									className={`block text-center py-3 rounded-lg text-base font-semibold transition-colors ${
+									className={`block text-center py-3 rounded-lg text-sm font-semibold transition-colors ${
 										plan.highlight
 											? 'bg-primary text-primary-foreground hover:bg-primary/90'
 											: 'border hover:bg-muted'
@@ -414,42 +341,19 @@ export default async function LandingPage({
 				</div>
 			</section>
 
-			{/* CTA */}
-			<section className='py-16'>
-				<div className='mx-auto max-w-2xl px-4 text-center'>
-					<h2 className='text-3xl font-bold mb-4'>
-						{lang === 'ru'
-							? 'Начните считать налоги правильно'
-							: 'Салықтарды дұрыс есептеуді бастаңыз'}
-					</h2>
-					<p className='text-base text-muted-foreground mb-8'>
-						{lang === 'ru'
-							? 'Бесплатно. Без регистрации по телефону. Просто войдите через Google.'
-							: 'Тегін. Телефонмен тіркелусіз. Google арқылы кіріңіз.'}
-					</p>
-					<Link
-						href={`${prefix}/login`}
-						className='inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary/90 transition-colors'
-					>
-						{lang === 'ru' ? 'Войти через Google' : 'Google арқылы кіру'}
-						<ArrowRight className='w-5 h-5' />
-					</Link>
-				</div>
-			</section>
-
 			{/* Футер */}
-			<footer className='border-t py-8'>
+			<footer className='border-t py-8 text-center'>
 				<div className='mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4'>
-					<p className='text-base text-muted-foreground'>
+					<p className='text-sm text-muted-foreground'>
 						© 2026 SalyqApp.{' '}
 						{lang === 'ru'
 							? 'Все права защищены.'
 							: 'Барлық құқықтар қорғалған.'}
 					</p>
-					<p className='text-base text-muted-foreground'>
+					<p className='text-sm text-muted-foreground'>
 						{lang === 'ru'
-							? 'Данные актуальны на 2026 год. Всегда консультируйтесь с бухгалтером.'
-							: 'Деректер 2026 жылға өзекті. Әрқашан бухгалтермен кеңесіңіз.'}
+							? 'Данные актуальны на 2026 год.'
+							: 'Деректер 2026 жылға өзекті.'}
 					</p>
 				</div>
 			</footer>

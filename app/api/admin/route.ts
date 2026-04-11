@@ -2,13 +2,17 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import * as z from 'zod'
 
+// Замени только эту функцию в начале файла admin route
 async function isAdmin(userId: string): Promise<boolean> {
-	const user = await prisma.user.findUnique({
-		where: { id: userId },
-		select: { email: true },
-	})
-	// Сравнение с переменной окружения
-	return user?.email === process.env.ADMIN_EMAIL
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true },
+  })
+  
+  // Сравнение с приведением к нижнему регистру для защиты от ошибок регистра
+  if (!user?.email || !process.env.ADMIN_EMAIL) return false;
+  
+  return user.email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase()
 }
 
 export async function GET(request: Request) {

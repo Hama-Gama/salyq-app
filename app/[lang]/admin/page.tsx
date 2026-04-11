@@ -259,50 +259,58 @@ function UserList({ users }: { users: any[] }) {
 			<table className='w-full text-left text-xs'>
 				<thead className='bg-neutral-100 border-b font-bold uppercase italic text-neutral-600'>
 					<tr>
+						<th className='p-4 w-12'>#</th> {/* Новая колонка для номера */}
 						<th className='p-4'>User Details & ID</th>
 						<th className='p-4'>Subscription</th>
 						<th className='p-4'>Expiry Date</th>
 					</tr>
 				</thead>
 				<tbody>
-					{users.map(u => (
-						<tr
-							key={u.id}
-							className='border-b hover:bg-neutral-50 transition-colors'
-						>
-							<td className='p-4'>
-								<div className='font-bold text-sm text-black'>{u.email}</div>
-								<div className='flex items-center gap-2 mt-1.5'>
-									<code className='text-[9px] bg-neutral-200 px-1.5 py-0.5 rounded text-neutral-600 font-mono'>
-										{u.id}
-									</code>
-									<button
-										onClick={() => copyToClipboard(u.id)}
-										className='text-neutral-400 hover:text-black transition-colors'
-										title='Copy ID'
+					{users.map(
+						(
+							u,
+							index, // Добавили index сюда
+						) => (
+							<tr
+								key={u.id}
+								className='border-b hover:bg-neutral-50 transition-colors'
+							>
+								<td className='p-4 font-mono text-neutral-400'>
+									{index + 1} {/* Выводим номер (1, 2, 3...) */}
+								</td>
+								<td className='p-4'>
+									<div className='font-bold text-sm text-black'>{u.email}</div>
+									<div className='flex items-center gap-2 mt-1.5'>
+										<code className='text-[9px] bg-neutral-200 px-1.5 py-0.5 rounded text-neutral-600 font-mono'>
+											{u.id}
+										</code>
+										<button
+											onClick={() => copyToClipboard(u.id)}
+											className='text-neutral-400 hover:text-black transition-colors'
+										>
+											<Copy size={12} />
+										</button>
+									</div>
+								</td>
+								<td className='p-4'>
+									<span
+										className={`px-2 py-1 rounded-full text-[10px] font-black tracking-tighter ${
+											u.subscriptionType === 'PRO'
+												? 'bg-green-100 text-green-700'
+												: 'bg-neutral-100 text-neutral-400'
+										}`}
 									>
-										<Copy size={12} />
-									</button>
-								</div>
-							</td>
-							<td className='p-4'>
-								<span
-									className={`px-2 py-1 rounded-full text-[10px] font-black tracking-tighter ${
-										u.subscriptionType === 'PRO'
-											? 'bg-green-100 text-green-700'
-											: 'bg-neutral-100 text-neutral-400'
-									}`}
-								>
-									{u.subscriptionType}
-								</span>
-							</td>
-							<td className='p-4 text-neutral-400 font-mono'>
-								{u.subscriptionEnd
-									? new Date(u.subscriptionEnd).toLocaleDateString()
-									: '—'}
-							</td>
-						</tr>
-					))}
+										{u.subscriptionType}
+									</span>
+								</td>
+								<td className='p-4 text-neutral-400 font-mono'>
+									{u.subscriptionEnd
+										? new Date(u.subscriptionEnd).toLocaleDateString()
+										: '—'}
+								</td>
+							</tr>
+						),
+					)}
 				</tbody>
 			</table>
 		</div>

@@ -1,6 +1,7 @@
 import { signIn } from '@/auth'
 import type { Locale } from '@/types'
 import { getDictionary } from '@/lib/dictionary'
+import Link from 'next/link'
 
 export default async function LoginPage({
 	params,
@@ -54,10 +55,34 @@ export default async function LoginPage({
 					</button>
 				</form>
 
-				<p className='text-xs text-gray-400 text-center mt-6'>
-					{lang === 'ru'
-						? 'Входя в систему, вы соглашаетесь с условиями использования'
-						: 'Жүйеге кіру арқылы пайдалану шарттарымен келісесіз'}
+				<p className='text-base text-gray-400 text-center mt-4'>
+					{lang === 'ru' ? (
+						<>
+							Входя в систему, вы соглашаетесь с{' '}
+							<Link href='/terms' className='underline hover:text-gray-600'>
+								офертой
+							</Link>{' '}
+							и{' '}
+							<Link href='/privacy' className='underline hover:text-gray-600'>
+								политикой конфиденциальности
+							</Link>
+						</>
+					) : (
+						<>
+							Жүйеге кіру арқылы{' '}
+							<Link href='/kz/terms' className='underline hover:text-gray-600'>
+								офертамен
+							</Link>{' '}
+							және{' '}
+							<Link
+								href='/kz/privacy'
+								className='underline hover:text-gray-600'
+							>
+								құпиялылық саясатымен
+							</Link>{' '}
+							келісесіз
+						</>
+					)}
 				</p>
 			</div>
 		</main>

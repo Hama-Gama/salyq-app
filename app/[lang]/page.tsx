@@ -342,15 +342,33 @@ export default async function LandingPage({
 			</section>
 
 			{/* Футер */}
-			<footer className='border-t py-8 text-center'>
+			<footer className='border-t py-8'>
 				<div className='mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4'>
-					<p className='text-sm text-muted-foreground'>
+					<p className='text-base text-muted-foreground'>
 						© 2026 SalyqApp.{' '}
 						{lang === 'ru'
 							? 'Все права защищены.'
 							: 'Барлық құқықтар қорғалған.'}
 					</p>
-					<p className='text-sm text-muted-foreground'>
+					<div className='flex gap-4'>
+						<Link
+							href={`${prefix}/terms`}
+							target='_blank'
+							rel='noopener noreferrer'
+							className='text-base text-muted-foreground hover:text-foreground'
+						>
+							{lang === 'ru' ? 'Оферта' : 'Оферта'}
+						</Link>
+						<Link
+							href={`${prefix}/privacy`}
+							target='_blank'
+							rel='noopener noreferrer'
+							className='text-base text-muted-foreground hover:text-foreground'
+						>
+							{lang === 'ru' ? 'Конфиденциальность' : 'Құпиялылық'}
+						</Link>
+					</div>
+					<p className='text-base text-muted-foreground'>
 						{lang === 'ru'
 							? 'Данные актуальны на 2026 год.'
 							: 'Деректер 2026 жылға өзекті.'}
